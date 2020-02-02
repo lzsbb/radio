@@ -1,0 +1,15 @@
+#!/bin/sh
+
+NVLOG=/nv/log
+TMPLOG=/tmp/log
+
+echo "Content-type: text/html"
+echo
+echo "<h1>Permanent log:</h1>"
+echo "<pre>"
+/bin/log show -m time,src,level,facility,progname $NVLOG
+echo "</pre>"
+echo "<h1>Volatile log:</h1>"
+echo "<pre>"
+/bin/log show -m time,src,level,facility,progname $TMPLOG
+echo "</pre>"

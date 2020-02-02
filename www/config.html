@@ -1,0 +1,279 @@
+<html>
+<head>
+<meta http-equiv="Expires" content="Fri, Jun 12 1981 09:30:00 GMT">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta http-equiv="Robots" content="noindex, nofollow">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<title><% print_str("MB_CONFIG"); %></title>
+<link type="text/css" rel="stylesheet" href="style.css" />
+<script type="text/javascript" src="inputChecker.js"></script>
+<script language="JavaScript" type="text/javascript" src="common.js"></script>
+<script language="JavaScript" type="text/javascript" src="res/main_common1.js"></script>
+<script language="JavaScript" type="text/javascript">
+
+function btnSubmit(form)
+{  
+  if ( form.multicolorLed.checked == true )
+  {
+    form.enablLED.value='0';
+  }
+  else
+  {
+    form.enablLED.value='1';
+  }
+  if ( form.dhcpClient.checked == true )
+  {
+    form.enablDhcpClient.value=1;
+  }
+  else
+  {
+    form.enablDhcpClient.value=0;
+
+    if ( isValidIpAddress(form.ethIpAddress.value) == false ) {
+    msg = "<% print_str("IP_ERR"); %>: "+form.ethIpAddress.value;
+    alert(msg);
+    return;
+    }
+    if ( isValidIpAddress(form.ethSubnetMask.value) == false ) {
+    msg = "<% print_str("IP_ERR"); %>: "+form.ethSubnetMask.value;
+    alert(msg);
+    return;
+    }
+
+    if ( isValidIpAddress(form.ethGateway.value) == false ) {
+    msg = "<% print_str("IP_ERR"); %>: "+form.ethGateway.value;
+    alert(msg);
+    return;
+    }
+    if ( isValidIpAddress(form.dns1.value) == false ) {
+    msg = "<% print_str("IP_ERR"); %>: "+form.dns1.value;
+    alert(msg);
+    return;
+    }
+  }
+
+  document.networkConfig.submit();  
+  return;
+}
+
+function setTextAttribute(form) {
+   if ( form.dhcpClient.checked == true )
+   {
+     form.ethIpAddress.disabled = true;
+     form.ethSubnetMask.disabled = true;
+     form.ethGateway.disabled = true;
+     form.dns1.disabled = true;
+   }
+   else
+   {
+     form.ethIpAddress.disabled = false;
+     form.ethSubnetMask.disabled = false;
+     form.ethGateway.disabled = false;
+     form.dns1.disabled = false;
+   }
+   return;
+}
+
+</script>
+</head>
+
+<body onResize="getWidth();" onLoad="getWidth();">
+
+
+<div id="top">
+  <div id="logo"></div>
+  <div id="txt1"><% print_str("MB_CONFIG"); %></div>
+</div>
+
+
+<div id="text">
+  <%
+    if(request['REQUEST_METHOD'] == "POST") {
+       if( form['enablDhcpClient'] == '0' ) {
+           set_gateway_info(form['ethGateway'], form['dns1']);
+           set_lan_info(form['ethIpAddress'], form['ethSubnetMask']);
+       }
+       else
+       {
+           set_gateway_info( "auto", "auto");
+           set_lan_info( "auto", "auto");
+       }
+
+       set_product_name( form['mbName']);
+       set_wireless( form['gwSSID'], form['Security'], form['Key']);
+       set_led_off( form['enablLED']);
+    }
+  %>
+
+  <form action="@@request['SCRIPT_NAME']" method="post" name="networkConfig" id="networkConfig">
+
+<table class='musicbox' width="100%" height="90%">
+  <tr>
+    <td align="center" valign="middle">
+    <div align="center">
+
+<table class='musicbox' cellspacing="4">
+  <tr>
+    <td><div id="txt3"><% print_str("MB_NAME"); %><div id="txt1"></div></td>
+    <td><% mb_name=get_product_name(); %> <input class='musicbox' type="text" name="mbName" value="@@mb_name"></td>
+  </tr>
+
+  <tr><td></td></tr>
+
+  <tr>
+    <td colspan=2 align="center">
+      <div id="txt4">---------------------------------------------------------------------------------</div>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <div id="txt2"><% print_str("WIFI"); %></div>
+    </td>
+  </tr>
+
+  <tr>
+    <td><div id="txt3"><% print_str("WIFI_SSID"); %></div></td>
+    <td><% gw_ssid=get_wireless( "SSID"); %> <input class='musicbox' type="text" name="gwSSID" value="@@gw_ssid"></td>
+  </tr>
+  <tr>
+    <td><div id="txt3"><% print_str("WIFI_SECURITY"); %></div></td>
+    <td>
+	<% 
+        	security=get_wireless( "SECURITY"); 
+		s1 = ""; s2 = ""; s3 = "";
+	        if (security == "wpa") s1 = "selected";
+	        if (security == "wep") s2 = "selected";
+	        if (security == "none") s3 = "selected";
+        %> 
+	<select class='musicbox' name="Security">
+		<option value="wpa" @@s1>wpa </option> 
+		<option value="wep" @@s2>wep </option> 
+		<option value="none" @@s3>none </option> 
+	</select>
+    </td>
+  </tr>
+  <tr>
+    <td><div id="txt3"><% print_str("WIFI_KEY"); %></div></td>
+    <td><% key=get_wireless( "KEY"); %> <input class='musicbox' type="text" name="Key" value="@@key" size="40" maxlength="64">    </td>
+  </tr>
+
+  <tr>
+    <td colspan=2 align="center">
+      <div id="txt4">------------</div>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <div id="txt2"><% print_str("LAN"); %></div>
+    </td>
+  </tr>
+
+  <% dhcp_value = 0; %>
+  <tr>
+    <td><div id="txt3"><% print_str("DHCP_CLIENT"); %></div></td>
+    <td>
+    <% 
+	lan_ip=get_lan_info("IP"); 
+	if (lan_ip == "auto")
+        {
+	   dhcp_value = '1';
+           state = "checked";
+           disabled = "disabled";
+	}
+        else
+        {
+	   dhcp_value = '0';
+           state = "";
+           disabled = "";
+	}
+    %>
+    <input class='musicbox' type="checkbox" value="DHCP" name="dhcpClient" @@state onClick="javascript: setTextAttribute(this.form);"><input type="hidden" value=@@dhcp_value name="enablDhcpClient" >
+    </td>
+  </tr>
+  <tr>
+    <td><div id="txt3"><% print_str("LAN_IP_ADDRESS"); %></div></td>
+    <td><input class='disabled' type="text" name="ethIpAddress" value=@@lan_ip @@disabled></td>
+  </tr>
+  <tr>
+    <td><div id="txt3"><% print_str("IP_DEFAULT_GATEWAY"); %></div></td>
+    <td><% gateway=get_gateway_info("GATEWAY"); %> <input class='disabled' type="text" name="ethGateway" value=@@gateway @@disabled></td>
+  </tr>
+  <tr>
+    <td><div id="txt3"><% print_str("DNS_SERVER1"); %></div></td>
+    <td><% dns1=get_gateway_info("DNS"); %> <input class='disabled' type="text" name="dns1" value=@@dns1 @@disabled></td>
+  </tr>
+  <tr>
+    <td><div id="txt3"><% print_str("LAN_IP_NETMASK"); %></div></td>
+    <td><% submask=get_lan_info("NETMASK"); %> <input class='disabled' type="text" name="ethSubnetMask" value=@@submask @@disabled></td>
+  </tr>
+
+  <tr>
+    <td colspan=2 align="center">
+      <div id="txt4">------------</div>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <div id="txt2"><% print_str("DISPLAY"); %></div>
+    </td>
+  </tr>
+
+  <tr>
+    <td><div id="txt3"><% print_str("LED"); %></div></td>
+    <td>
+    <% 
+	if (get_led_off() == '0')
+        {
+	   led_value = '0';
+           LedState = "checked";
+	}
+        else
+        {
+	   led_value = '1';
+           LedState = "";
+	}
+    %>
+    <input class='musicbox' type="checkbox" value="DHCP" name="multicolorLed" @@LedState><input type="hidden" value=@@led_value name="enablLED" >
+    </td>
+  </tr>
+
+
+  <tr>
+    <td colspan=2 align="center">
+      <div id="txt4">---------------------------------------------------------------------------------</div>
+    </td>
+  </tr>
+
+  <tr>
+    <td colspan=2 align="center">
+      <input type='submit' name='ok' value='ok' class='musicbox' onClick="javascript:btnSubmit(document.networkConfig);">
+    </td>
+  </tr>
+
+  </table>
+  </div>
+  </td>
+</tr>
+</table>
+</form>
+</div>
+
+
+  </form>
+</div>
+
+<div id="bottom">
+ <div id="linkconfig" onclick="goconfig()" title="<% print_str("Z_MB_LINK_CONFIG"); %>"></div>
+ <div id="linkmyradio" onclick="gomyradio()" title="<% print_str("Z_MB_LINK_MYRADIO"); %>"></div>
+ <div id="linkpodcast" onclick="gopodcast()" title="<% print_str("Z_MB_LINK_PODCAST"); %>"></div>
+ <div id="linkhome" onclick="gohome()" title="<% print_str("Z_MB_LINK_HOME"); %>"></div>
+  <div id="logo_bottom"></div>
+</div>
+
+</body>
+</html>
+

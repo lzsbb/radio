@@ -1,0 +1,33 @@
+
+MEDIASERVER_PID=$(kdb get system/runtime/upnp_media_server/pid)
+
+if [ "$MEDIASERVER_PID" != "0" ]; then
+	case $1 in
+	    start)
+	        /bin/echo "Starting upnp_media_server ..."
+# UPnP needs a default route
+	
+        	 if [ -d /var/usbdrive ]; then
+			if [ ! -d /var/usbdrive/1/.database ]; then
+				echo "creating .database directory"
+				mkdir /var/usbdrive/1/.database
+			fi
+# usb state 1= START
+			kdb set system/runtime/upnp_media_server/usb_state 1
+# start the downloading podcast of upnp media server radio
+			kdb set system/config/podcast/load/update 1
+		fi
+		
+        	;;
+	    stop)
+		/bin/echo "Stopping upnp_media_server ..."
+# usb state 0= STOP
+		kdb set system/runtime/upnp_media_server/usb_state 0
+		;;
+	    restart)
+		$0 stop
+		$0 start
+		;;
+	    *)
+	esac
+fi

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+KDB=/bin/kdb
+KDB_PODCAST=system/config/podcast/
+
+echo "Content-type: text/plain"
+echo
+
+kdb_value="$($KDB get $KDB_PODCAST$1)"
+if [ "$kdb_value" = "" ]; then
+    kdb_value="null";
+fi
+echo "$kdb_value"
+

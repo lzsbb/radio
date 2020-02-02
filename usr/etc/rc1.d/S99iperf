@@ -1,0 +1,17 @@
+#!/bin/sh
+#
+# Start the iperf server daemon for testing
+#
+. /etc/config
+
+case $1 in
+    start)
+        /bin/echo "Starting iperf UDP server ..."
+        spawn respawn "/usr/bin/iperf -u -s"
+        ;;
+    stop)
+        /bin/echo "Stopping iperf ..."
+        spawn cancel "/usr/bin/iperf -u -s"
+        ;;
+    *)
+esac

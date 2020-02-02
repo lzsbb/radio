@@ -1,0 +1,25 @@
+#!/bin/sh
+
+KDB=/bin/kdb
+KDB_PODCAST_STATUS=system/config/podcast/status
+KDB_PODCAST_DOWNLOAD=system/config/podcast/download
+
+header() {
+echo "Content-type: text/plain"
+echo
+}
+
+kdbget() {
+    echo ""
+    for i in 0 1 2 3 4 5 6 7 8 9; do
+        echo "$($KDB get $1$i);"
+    done
+}
+
+kdbgetdownloading() {
+    echo "$($KDB get $1);"
+}
+
+header
+kdbget $KDB_PODCAST_STATUS
+kdbgetdownloading $KDB_PODCAST_DOWNLOAD

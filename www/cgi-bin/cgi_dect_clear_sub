@@ -1,0 +1,12 @@
+#!/bin/sh
+echo "Content-type: text/html"
+echo
+echo "<html><head><meta HTTP-EQUIV='Pragma' CONTENT='no-cache'></head><body>"
+
+echo "DECT clear sub<br>"
+echo "<br><br>"
+
+/etc/init.d/mdg clear_sub
+
+echo "<br>"
+echo "---Done--<br>"

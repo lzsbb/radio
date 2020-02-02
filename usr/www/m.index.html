@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="expires" content="Fri, Jun 12 1981 08:20:00 GMT" />
+<meta http-equiv="pragma" content="no-cache" />
+<meta http-equiv="cache-control" content="no-cache" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title id="DOCTITLE">MusicBox</title>
+<link type="text/css" rel="stylesheet" href="res/cssm.css" />
+<!--
+<link type="text/css" rel="stylesheet" href="res/cssm.css" media="handheld"/>
+-->
+<script language="JavaScript" type="text/javascript" src="res/range.js"></script>
+<script language="JavaScript" type="text/javascript" src="res/slider.js"></script>
+<script language="JavaScript" type="text/javascript" src="res/timer.js"></script>
+<script language="JavaScript" type="text/javascript" src="res/core.js"></script>
+<script language="JavaScript" type="text/javascript" src="res/httpRequest.js"></script>
+<script language="JavaScript" type="text/javascript" src="res/popupMenu.js"></script>
+<script language="JavaScript" type="text/javascript" src="res/main_common.js"></script>
+<script language="JavaScript" type="text/javascript" src="res/main_common1.js"></script>
+<script language="JavaScript" type="text/javascript" src="res/main_m.js"></script>
+<script language="JavaScript" type="text/javascript" src="res/language_str.js"></script>
+</head>
+<body>
+	<div id="top">
+		<img id="LOGO" src="res/top.logo.png" alt="MusicBox">
+		<div id="DISPLAY">
+			<div id="DISPLAY_CENTER"></div>
+			<div id="DISPLAY_LEFT"></div>
+			<div id="NOWPLAYING_TOPLINE"></div>
+			<div id="NOWPLAYING_LINE1"></div>
+			<div id="NOWPLAYING_LINE2"></div>
+			<div id="NOWPLAYING_LINE3"></div>
+			<div id="DISPLAY_RIGHT">
+				<div id="TIME"></div>
+			</div>
+		</div>
+		<div id="remotectrl">
+	           <button id="PREV" type="button" onclick="prev()">
+                      <img src="res/remotectrl.prev_m.png" alt="Prev">
+                   </button>
+	           <button id="NEXT" type="button" onclick="next()">
+                      <img src="res/remotectrl.next_m.png" alt="Next">
+                   </button>
+	           <button id="PLAY" type="button" onclick="play()">
+	              <img id="PLAY_PAUSE" src="res/remotectrl.play_m.png" alt="Play">
+                   </button>
+	           <button id="VOL_MINUS" type="button" onclick="vol_minus()">
+	              <img src="res/remotectrl.minus_m.png" alt="-">
+                   </button>
+	           <button id="VOL_PLUS" type="button" onclick="vol_plus()">
+	              <img src="res/remotectrl.plus_m.png" alt="+">
+                   </button>
+		</div>
+	</div>
+	<div id="bar">
+	                <img src="res/bottom.renderer.png" alt="Player">
+			<select id="RENDERER" onchange="updateStatus()"><option value="" /></select>
+	                <br>
+	                <img src="res/bar.server.png" alt="Server">
+	                
+			<select id="SERVER" onchange="changeserver()"><option value="" /></select>
+	                <br>
+	                <img src="res/bar.path.png" alt="Path">
+			<select id="PATH" onchange="browse()"><option value="" /></select>
+	                <button id="PARENT" type="button" onclick="goparent()">
+                        <img src="res/bar.parent_m.png" alt="Up" title="Up">
+                        </button>
+		<div id="INFO" onclick="info()"></div>
+	</div>
+	<div id="BROWSER"></div>
+	<div id="bottom">
+		<div id="LOGO_FOOTER"></div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<html>
+<head>
+<meta http-equiv="Expires" content="Fri, Jun 12 1981 09:30:00 GMT">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta http-equiv="Robots" content="noindex, nofollow">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<title>Add a podcast</title>
+<link type="text/css" rel="stylesheet" href="style.css" />
+<script type="text/javascript" src="inputChecker.js"></script>
+<script language="JavaScript" type="text/javascript" src="common.js"></script>
+<script language="JavaScript" type="text/javascript" src="res/main_common1.js"></script>
+<script language="JavaScript" type="text/javascript">
+
+function btnSubmit(form)
+{  
+  document.podcastConfig.submit();
+  return;
+}
+
+
+</script>
+</head>
+
+<body onResize="getWidth();" onLoad="getWidth();">
+
+
+<div id="top">
+  <div id="logo"></div>
+  <div id="txt1"><% print_str("CFG_PODCAST_CONFIG"); %></div>
+</div>
+
+
+<div id="text">
+<%
+  if(request['REQUEST_METHOD'] == "POST") {
+    set_podcast(form['podcastName'], form['podcastUrl'], form['podcastRepertory']);
+%>
+    <script language="JavaScript" type="text/javascript">
+    gopodcast();
+    </script>
+<%
+  }
+%>
+
+<form action="@@request['SCRIPT_NAME']" method="post" name="podcastConfig" id="podcastConfig">
+
+<table class='musicbox' width="100%" height="90%">
+  <tr>
+    <td align="center" valign="middle">
+    <div align="center">
+
+    <table class='musicbox' cellspacing="5">
+
+  <tr>
+    <td colspan=2 align="center">
+      <div id="txt3">Add a Podcast</div>
+    </td>
+  </tr>
+
+  <tr>
+    <td colspan=2 align="center">
+      <div id="txt4">------------</div>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <div id="txt3"><% print_str("CFG_PODCAST_NAME"); %></div>
+    </td>
+    <td><input class='musicbox' type="text" name="podcastName" value="name of podcast" size="60" xlength="255" onClick="javascript:this.value=''">
+
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <div id="txt3"><% print_str("CFG_PODCAST_URL"); %></div>
+    </td>
+    <td><input class='musicbox' type="text" name="podcastUrl" value="url of podcast" size="60" xlength="255" onClick="javascript:this.value=''">
+    </td>
+  </tr>
+
+  <tr>
+    <td colspan=2 align="center">
+      <div id="txt4">----------------------------------------------------------------------</div>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <div id="txt3">USB Download</div>
+    </td>
+    <td>
+      <input class='musicbox' type="checkbox" name="podcastDownload" onClick="disable_text()">
+    </td>
+  <tr>
+
+  <tr>
+    <td>
+      <div id="txt3">Directory</div>
+    </td>
+
+    <td>
+      <input class='disabled' type="text" id="downloadrepertory" name="podcastRepertory" value="/podcast" size="60" xlength="255" disabled>
+    </td>
+  </tr>
+
+  <tr>
+    <td colspan=2 align="center">
+      <div id="txt4">------------</div>
+    </td>
+  </tr>
+
+  <tr>
+    <td colspan=2 align="center">
+      <input type='submit' name='add' value='add' class='musicbox'>
+    </td>
+  </tr>
+
+  <tr>
+    <td colspan=2 align="center">
+      <input type='button' name='back' value='back' class='musicbox' onClick="window.location='podcast.html'">
+    </td>
+  </tr>
+
+  </table>
+  </div>
+  </td>
+</tr>
+</table>
+</form>
+</div>
+
+<div id="bottom">
+ <div id="linkconfig" onclick="goconfig()" title="<% print_str("Z_MB_LINK_CONFIG"); %>"></div>
+ <div id="linkmyradio" onclick="gomyradio()" title="<% print_str("Z_MB_LINK_MYRADIO"); %>"></div>
+ <div id="linkpodcast" onclick="gopodcast()" title="<% print_str("Z_MB_LINK_PODCAST"); %>"></div>
+ <div id="linkhome" onclick="gohome()" title="<% print_str("Z_MB_LINK_HOME"); %>"></div>
+  <div id="logo_bottom"></div>
+</div>
+
+</body>
+</html>
+

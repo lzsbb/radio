@@ -1,0 +1,463 @@
+/* following lines lets Opera detect this CSS was written for mobile devices */
+@media handheld { #mhandheld {} }
+body,h1,div,table,tr,td,input,select,option {
+	background-color:#FFFFFF;
+	padding:0;
+	margin:0;
+	border:0;
+	font-size:10px;
+	height:auto;
+}
+body {
+	/*height:200px;*/
+}
+
+div#BORDER
+{
+	position:relative;
+	display:block;
+	background-color:#FFFFFF;
+	height:12px;
+	width:100%;
+	top:0px;
+	left:0px;
+	text-align:center;
+}
+
+input#BUTTON 
+{
+	position:relative;
+	display:block;
+	float:left;
+	top:0px;
+	left:0px;
+	height:12px;
+	width:40px;
+	margin:0px 0px 0px 0px;
+	padding:0px 0px 0px 0px;
+	background-color:#d5dbd9;
+	cursor:hand;
+}
+
+div#LOGO {
+	position:relative;
+	display:block;
+	background-image:url('top.logo.png');
+	background-position:center;
+	background-repeat:no-repeat;
+/*#if defined(CONFIG_WEB_MB_INVENTEL)
+	height:36px;
+#else
+	height:22px;
+#endif*/
+	left:0px;
+	top:0px;
+	width:100%;
+	height:24px;
+}
+
+div#maincontent 
+{
+	position:absolute;
+	/*overflow:visible;*/
+	background-color:#FFFFFF;
+	float:left;
+	height:100%;
+	width:100%;
+	top:0px;
+	left:0px;
+}
+
+div#NOWPLAYING_TOPLINE {
+	position:relative;
+	display:block;
+	float:left;
+	width:100%;
+	height:auto;
+	min-height:12px;
+	left:0px;
+	top:0px;
+	text-align:center;
+	font-size:10px;
+	font-weight:bold;
+	color:#393f3c;
+	overflow:hidden;
+	cursor:default;
+}
+div#NOWPLAYING_LINE1 {
+	position:relative;
+	display:block;
+	float:left;
+	width:100%;
+	height:auto;
+	min-height:12px;
+	left:0px;
+	top:0px;
+	text-align:center;
+	font-size:10px;
+	color:#393f3c;
+	overflow:hidden;
+	cursor:default;
+}
+div#NOWPLAYING_LINE2 {
+	position:relative;
+	display:block;
+	float:left;
+	width:100%;
+	height:auto;
+	min-height:12px;
+	left:0px;
+	top:0px;
+	text-align:center;
+	font-size:10px;
+	color:#393f3c;
+	overflow:hidden;
+	cursor:default;
+}
+div#NOWPLAYING_LINE3 {
+	position:relative;
+	display:block;
+	float:left;
+	width:100%;
+	height:auto;
+	min-height:12px;
+	left:0px;
+	top:0px;
+	text-align:center;
+	font-size:10px;
+	color:#393f3c;
+	overflow:hidden;
+	cursor:default;
+}
+div#TIME {
+	position:relative;
+	display:block;
+	float:left;
+	width:100%;
+	height:auto;
+	min-height:12px;
+	left:0px;
+	top:0px;
+	text-align:center;
+	font-size:10px;
+	color:#393f3c;
+	overflow:hidden;
+	cursor:default;
+}
+
+div#BUTTONSBLOCK 
+{
+	display:block;
+	float:left;
+	position:relative;
+	top:0px;
+	left:0px;
+	width:100%;
+	height:auto;
+	padding-right:0px;
+}
+
+a#LINKPREV 
+{
+	position:relative;
+	display:block;
+	float:left;
+	width:27px;
+	height:27px;
+	margin-right:2px;
+	margin-bottom:2px;
+	top:0px;
+	left:0px;
+}
+
+div#PREV {
+	position:relative;
+	display:block;
+	float:left;
+	width:27px;
+	height:27px;
+	left:0px;
+	top:0px;
+	background:url('remotectrl.prev.png') no-repeat ;
+	cursor:hand;
+}
+div#PREV:active {
+	background-position:-27px 0px;
+}
+
+div#BLOCKNEXT
+{
+	position:relative;
+	display:block;
+	float:left;
+	margin-right:1px;
+	margin-bottom:1px;
+	width:27px;
+	height:54px;
+	top:0px;
+	left:0px;
+}
+
+div#UPPERBLOCKNEXT
+{
+	position:relative;
+	display:block;
+	width:27px;
+	height:27px;
+	top:0px;
+	left:0px;
+}
+
+a#LINKNEXT 
+{
+	position:relative;
+	display:block;
+	width:27px;
+	height:27px;
+	top:0px;
+	left:0px;
+}
+
+div#NEXT {
+	position:relative;
+	display:block;
+	width:27px;
+	height:27px;
+	left:0px;
+	top:0px;
+	background:url('remotectrl.next.png') no-repeat ;
+	cursor:hand;
+}
+div#NEXT:active {
+	background-position:-27px 0px;
+}
+
+a#LINKMINUS 
+{
+	position:relative;
+	display:block;
+	width:27px;
+	height:27px;
+	left:0px;
+	top:0px;
+}
+
+div#VOL_MINUS {
+	position:relative;
+	display:block;
+	width:27px;
+	height:27px;
+	left:0px;
+	top:0px;
+	background:url('remotectrl.minus_m.png') no-repeat ;
+	cursor:hand;
+}
+div#VOL_MINUS:active {
+}
+
+div#VOLUMEBUTTONS
+{
+	position:relative;
+	display:block;
+	float:left;
+	width:27px;
+	height:54px;
+	top:0px;
+	left:0px;
+}
+
+div#VOLUMEBLOCK
+{
+	position:absolute;
+	display:block;
+	float:left;
+	width:54px;
+	height:54px;
+	top:0px;
+	right:2px;
+}
+
+div#IMGVOL
+{
+	position:relative;
+	display:block;
+	float:left;
+	width:27px;
+	height:54px;
+	top:0px;
+	left:0px;
+	background:url('volume.png') no-repeat ;
+	background-position:-108px 0px;
+}
+
+a#LINKPLUS 
+{
+	position:relative;
+	display:block;
+	width:27px;
+	height:27px;
+	top:0px;
+	left:0px;
+}
+
+div#VOL_PLUS {
+	position:relative;
+	display:block;
+	width:27px;
+	height:27px;
+	left:0px;
+	top:0px;
+	background:url('remotectrl.plus_m.png') no-repeat ;
+	cursor:hand;
+}
+div#VOL_PLUS:active {
+}
+
+a#LINKPLAY_PAUSE 
+{
+	position:relative;
+	display:block;
+	float:left;
+	width:54px;
+	height:54px;
+	margin-right:2px;
+	margin-bottom:2px;
+	top:0px;
+	left:0px;
+}
+
+div#PLAY_PAUSE {
+	position:relative;
+	display:block;
+	float:left;
+	width:54px;
+	height:54px;
+	left:0px;
+	top:0px;
+	background:url('remotectrl.play.png') no-repeat ;
+	background-position:0px 0px;
+	cursor:hand;
+}
+div#PLAY_PAUSE:active {
+	background-position:-54px 0px;
+}
+div#servers {
+	position:relative;
+	/*overflow:visible;*/
+	display:block;
+	height:auto;
+	width:100%;
+	top:0px;
+	left:0px;
+}
+div#SERVER {
+	position:relative;
+	display:block;
+	height:auto;
+	width:100%;
+	top:0px;
+	left:0px;
+}
+a.SERVERENTRY0 
+{
+	position:relative;
+	background-color:#d5dbd9;
+	display:block;
+	float:left;
+	height:auto;
+	width:100%;
+	top:0px;
+	left:0px;
+	font-size:10px;
+	font-style:normal;
+	color:Black;
+	text-decoration:none;
+}
+a.SERVERENTRY1 
+{
+	position:relative;
+	background-color:#fff;
+	display:block;
+	float:left;
+	height:auto;
+	width:100%;
+	top:0px;
+	left:0px;
+	font-size:10px;
+	font-style:normal;
+	color:Black;
+	text-decoration:none;
+}
+a#BROWSERENTRY0 
+{
+	position:relative;
+	background-color:#d5dbd9;
+	display:block;
+	float:left;
+	height:auto;
+	width:100%;
+	top:0px;
+	left:0px;
+	font-size:10px;
+	font-style:normal;
+	color:Black;
+	text-decoration:none;
+}
+a#BROWSERENTRY1 
+{
+	position:relative;
+	background-color:#fff;
+	display:block;
+	float:left;
+	height:auto;
+	width:100%;
+	top:0px;
+	left:0px;
+	font-size:10px;
+	font-style:normal;
+	color:Black;
+	text-decoration:none;
+}
+img#FOLDERIMG 
+{
+	border:0px solid Black;
+}
+div#IMGSEARCH
+{
+	display:block;
+	position:relative;
+	height:100px;
+	width:100%;
+	top:0px;
+	left:0px;
+	background:url('search4files.png') no-repeat;
+	background-position:center;
+}
+div#BROWSER {
+	/*position:absolute;
+	overflow:visible;
+	width:240px;
+	top:0px;
+	bottom:0px;
+	height:auto;*/
+	position:relative;
+	display:block;
+	overflow:visible;
+	float:left;
+	height:auto;
+	width:100%;
+	top:0px;
+	left:0px;
+	overflow:auto;
+}
+div#ERROR_TEXT {
+	position:relative;
+	display:block;
+	width:100%;
+	height:100%;
+	top:0px;
+	left:0px;
+	text-align:center;
+	font-size:10px;
+	color:Red;
+}

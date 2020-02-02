@@ -1,0 +1,16 @@
+#!/bin/sh
+echo "Content-type: text/html"
+echo
+echo "<html><head><meta HTTP-EQUIV='Pragma' CONTENT='no-cache'></head><body>"
+
+echo "Audio test dect<br>"
+echo "<br><br>"
+
+/usr/blue/audio_test -m 3 -s
+
+echo "<br>"
+echo "---<br>"
+echo "<a href="cgi_audio_test_dect">Restart DECT</a>"
+echo "<br><br>"
+
+/usr/blue/mdgtool subinfo

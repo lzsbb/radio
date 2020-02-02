@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="expires" content="Fri, Jun 12 1981 08:20:00 GMT" />
+<meta http-equiv="pragma" content="no-cache" />
+<meta http-equiv="cache-control" content="no-cache" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title id="DOCTITLE"><% print_str("Z_MB"); %></title>
+<link type="text/css" rel="stylesheet" href="res/css.css" />
+<script language="JavaScript" type="text/javascript" src="res/range.js"></script>
+<script language="JavaScript" type="text/javascript" src="res/slider.js"></script>
+<script language="JavaScript" type="text/javascript" src="res/timer.js"></script>
+<script language="JavaScript" type="text/javascript" src="res/core.js"></script>
+<script language="JavaScript" type="text/javascript" src="res/httpRequest.js"></script>
+<script language="JavaScript" type="text/javascript" src="res/popupMenu.js"></script>
+<script language="JavaScript" type="text/javascript" src="res/main_common.js"></script>
+<script language="JavaScript" type="text/javascript" src="res/main_common1.js"></script>
+<script language="JavaScript" type="text/javascript" src="res/main.js"></script>
+<script language="JavaScript" type="text/javascript" src="res/language_str.js"></script>
+</head>
+<body>
+	<div id="top">
+		<div id="LOGO"></div>
+		<div id="DISPLAY">
+			<div id="DISPLAY_CENTER"></div>
+			<div id="DISPLAY_LEFT"></div>
+			<div id="NOWPLAYING_TOPLINE"></div>
+			<div id="NOWPLAYING_LINE1"></div>
+			<div id="NOWPLAYING_LINE2"></div>
+			<div id="NOWPLAYING_LINE3"></div>
+			<div id="DISPLAY_RIGHT">
+				<div id="TIME"></div>
+				<div id="TIMEREMAIN"></div>
+				<div id="TIMETOTAL"></div>
+			</div>
+		</div>
+		<div id="remotectrl">
+			<div id="PREV" onclick="prev()"></div>
+			<div id="NEXT" onclick="next()"></div>
+			<div id="PLAY" onclick="play()"></div>
+			<div id="VOLUME"></div>
+			<input type="hidden" id="volume_value" />
+		</div>
+	</div>
+	<div id="bar">
+		<div id="servers">
+			<div id="serversimage"></div>
+			<div id="txtserver"><% print_str("Z_MB_SERVER"); %></div>
+			<select id="SERVER" onchange="changeserver()"><option value="" /></select>
+		</div>
+		<div id="paths">
+			<div id="pathsimage"></div>
+			<div id="txtpath"><% print_str("Z_MB_PATH"); %></div>
+			<select id="PATH" onchange="browse()"><option value="" /></select>
+			<div id="PARENT" onclick="goparent()" title="<% print_str("Z_MB_UP"); %>"></div>
+		</div>
+		<div id="INFO" onclick="info()"></div>
+	</div>
+	<div id="BROWSER"></div>
+	<div id="bottom">
+		<div id="renderers">
+	                <div id="txtrenderer"><% print_str("Z_MB_RENDERER"); %></div>
+			<select id="RENDERER" onchange="updateStatus()"><option value="" /></select>
+		</div>
+	<div id="linkconfig" onclick="goconfig()" title="<% print_str("Z_MB_LINK_CONFIG"); %>"></div>
+	<div id="linkmyradio" onclick="gomyradio()" title="<% print_str("Z_MB_LINK_MYRADIO"); %>"></div>
+	<div id="linkpodcast" onclick="gopodcast()" title="<% print_str("Z_MB_LINK_PODCAST"); %>"></div>
+	<div id="linkhome" onclick="gohome()" title="<% print_str("Z_MB_LINK_HOME"); %>"></div>
+		<div id="LOGO_FOOTER"></div>
+	</div>
+</body>
+</html>
+

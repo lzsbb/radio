@@ -1,0 +1,172 @@
+body {
+min-width:600px;
+overflow:hidden;
+background-color:#dfdfdf;
+font-family:"Lucida Grande","Verdana",Arial,Sans;
+}
+
+div#text {
+position:absolute;
+overflow:auto;
+top:86px;
+bottom:37px;
+height: expression(document.body.clientHeight - (86+37) + "px") ; /* top.height + bottom.height */
+}
+
+div#top {
+position:absolute;
+top: 0px;
+height:86px;
+left: 0px;
+width: 100%;
+/* IE */
+width:expression(Math.max(590,document.body.clientWidth));
+background-image:url(res/top.background.png);
+background-repeat:repeat-x;
+overflow:hidden;
+min-width:600px;
+}
+
+div#bottom {
+background-color: #dfdfdf;
+width: 100%;
+/* IE */
+width:expression(Math.max(600,document.body.clientWidth));
+position:absolute;
+bottom: 0px;
+height:37px;
+left: 0px;
+overflow:hidden;
+background-image:url(res/bottom.background.gif);
+background-repeat:repeat-x;
+min-width:600px;
+}
+
+div#txt1 {
+font-family:"Lucida Grande","Verdana",Arial,Sans;
+font-size:14px;
+font-weight:bold;
+position:absolute;
+left:11px;
+top:63px;
+color:#323232;
+}
+
+div#txt2 {
+font-family:"Lucida Grande","Verdana",Arial,Sans;
+font-weight:bold;
+font-size:13px;
+color:#323232;
+}
+
+div#txt3 {
+font-family:"Lucida Grande","Verdana",Arial,Sans;
+font-size:12px;
+color:#323232;
+}
+
+div#txt4 {
+font-family:"Lucida Grande","Verdana",Arial,Sans;
+font-size:11px;
+color:#a9a9a9;
+}
+
+div#txt5 {
+font-family:"Lucida Grande","Verdana",Arial,Sans;
+font-size:11px;
+color:#323232;
+}
+
+div#txtred {
+font-family:"Lucida Grande","Verdana",Arial,Sans;
+font-size:11px;
+color:#FF0000;
+}
+
+div#txtblue {
+font-family:"Lucida Grande","Verdana",Arial,Sans;
+font-size:11px;
+color:#285B90;
+}
+
+div#logo {
+position:absolute;
+	width:104px;
+	height:36px;
+	left:7px;
+	top:9px;
+background:url('res/top.logo.png') no-repeat;
+}
+
+div#logo_bottom {
+position:absolute;
+	width:66px;
+	height:31px;
+	right:18px;
+	bottom:3px;
+background:url('res/bottom.logo.png') no-repeat;
+}
+
+div#linkconfig {
+position:absolute;
+height:32px;
+width:32px;
+right:102px;
+bottom:3px;
+ background:url('res/config.gif') no-repeat;
+}
+
+div#linkmyradio {
+position:absolute;
+height:32px;
+width:32px;
+right:152px;
+bottom:3px;
+ background:url('res/myradio.gif') no-repeat;
+}
+
+div#linkpodcast {
+position:absolute;
+height:32px;
+width:32px;
+right:202px;
+bottom:3px;
+ background:url('res/podcast.gif') no-repeat;
+}
+
+div#linkhome {
+position:absolute;
+height:32px;
+width:32px;
+right:252px;
+bottom:3px;
+ background:url('res/home.gif') no-repeat;
+}
+
+input.musicbox, select.musicbox {
+border: solid 1px;
+border-color: #ababab;
+padding: 1px;
+background: #e8e8e7;
+color: #323232;
+margin-bottom: 1px;
+-moz-border-radius: 4px;
+}
+
+input.state, select.state {
+border: solid 1px;                                                             
+border-color:#ababab;
+background: #dfdfdf;
+-moz-border-radius: 5px;
+color: #323232;
+margin-bottom: 1px;
+} 
+
+input.disabled{
+border: solid 1px;                                                             
+border-color:#ababab;
+background: #dfdfdf;
+-moz-border-radius: 5px;
+margin-bottom: 1px;
+} 
+

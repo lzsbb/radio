@@ -1,0 +1,202 @@
+<?xml version="1.0"?>
+<radiolist>
+
+
+  <category>
+    <name>BBC</name>
+    <radio>
+      <name>BBC 1</name>
+      <url>rtsp://rmlive.bbc.co.uk/bbc-rbs/rmlive/ev7/live24/radio1/live/r1_dsat_g2.ra</url>
+    </radio>
+    <radio>
+      <name>BBC 2</name>
+      <url>rtsp://rmlive.bbc.co.uk/bbc-rbs/rmlive/ev7/live24/radio2/live/r2_dsat_g2.ra</url>
+    </radio>
+     <radio>
+      <name>BBC 3</name>
+      <url>rtsp://rmlive.bbc.co.uk/bbc-rbs/rmlive/ev7/live24/radio3/live/r3_dsat_g2.ra</url>
+    </radio>
+    <radio>
+      <name>BBC 4</name>
+      <url>rtsp://rmlive.bbc.co.uk/bbc-rbs/rmlive/ev7/live24/radio4/live/r4_dsat_g2.ra</url>
+    </radio>
+    <radio>
+      <name>BBC 5</name>
+      <url>rtsp://rmlive.bbc.co.uk/bbc-rbs/rmlive/ev7/live24/radio5/live/r5_tl_int_g2.ra</url>
+    </radio>
+ </category>
+
+  <category>
+    <name>Classical</name>
+    <radio>
+      <name>Play Classical UK </name>
+      <url>http://87.117.200.139:8060</url>
+    </radio>
+    <radio>
+      <name>SKY.FM - Mostly Classical</name>
+      <url>http://128.177.3.80:4028</url>
+    </radio>
+    <radio>
+      <name>Accent4 Live</name>
+      <url>http://213.251.174.50:900</url>
+    </radio>
+  </category>
+
+  <category>
+    <name>Funk Soul Dance 80s</name>
+    <radio>
+      <name>DanceGroove Radio</name>
+      <url>http://server6.digital-webstream.de:9300</url>
+    </radio>
+    <radio>
+      <name>Megamix-radio</name>
+      <url>http://88.191.13.45:8042</url>
+    </radio>
+  </category>
+
+  <category>
+    <name>Hip Hop</name>
+    <radio>
+      <name>Rap Core FM Hip Hop</name>
+      <url>http://64.27.29.194:8800</url>
+    </radio>
+
+    <radio>
+      <name>CounterpointFM</name>
+      <url>http://www.counterpointfm.com:8000/</url>
+    </radio>
+  </category>
+
+  <category>
+    <name>Jazz</name>
+    <radio>
+      <name>Smooth Choice</name>
+      <url>http://s1.viastreaming.net:8100</url>
+    </radio>
+    <radio>
+      <name>Boomer Radio.com</name>
+      <url>http://sc1.abacast.com:8017</url>
+    </radio>
+    <radio>
+      <name>SKY.FM - Modern Jazz</name>
+      <url>http://160.79.128.40:7032</url>
+    </radio>
+    <radio>
+      <name>SKY.FM - Absolutely Smooth Jazz</name>
+      <url>http://66.250.45.118:7042</url>
+    </radio>
+  </category>
+
+  <category>
+    <name>Folk</name>
+    <radio>
+      <name>Folk Alley </name>
+      <url>http://66.225.205.98:80</url>
+    </radio>
+  </category>
+
+  <category>
+    <name>Country</name>
+    <radio>
+      <name>L.A. Hot Country </name>
+      <url>http://208.64.161.40:5020</url>
+    </radio>
+  </category>
+  <category>
+    <name>80s</name>
+    <radio>
+      <name>Kickradio.nl, the 80s Channel </name>
+      <url>http://www.kickradio.nl:8000</url>
+    </radio>
+  </category>
+
+  <category>
+    <name>Metal </name>
+    <radio>
+      <name>4U-Rock'n'Metal</name>
+      <url>http://213.186.57.97:8100</url>
+    </radio>
+    <radio>
+      <name>Death FM</name>
+      <url>http://hi.death.fm</url>
+    </radio>
+
+    <radio>
+      <name>KWTF The Edge</name>
+      <url>http://s4.viastreaming.net:7220</url>
+    </radio>
+    <radio>
+      <name>NetRock 101.com</name>
+      <url>http://64.72.123.71:8090</url>
+    </radio>
+    <radio>
+      <name>Hard Radio</name>
+      <url>http://66.250.45.112:80/hardradio4.aac</url>
+    </radio>
+  </category>
+
+  <category>
+    <name>Rock</name>
+    <radio>
+      <name>Rock and All guitar heroes</name>
+      <url>http://213.186.57.97:8080</url>
+    </radio>
+    <radio>
+      <name>Le Mouv'</name>
+      <url>http://213.205.96.91:9923</url>
+    </radio>
+    <radio>
+      <name>Real Gold Radio - The Roots of Rock 'n' Soul</name>
+      <url>http://64.62.253.225:16256</url>
+    </radio>
+    <radio>
+      <name>The Rock Radio</name>
+      <url>http://128k.therock.fast-serv.com:80</url>
+    </radio>
+  </category>
+
+  <category>
+    <name>Misc</name>
+    <radio>
+      <name>107.8 radio JACKIE</name>
+      <url>http://radiojackie.com:12614/</url>
+    </radio>
+  </category>
+
+  <category>
+    <name>World Music</name>
+    <radio>
+      <name>radiophone.gr</name>	
+      <url>http://83.149.104.150:8400</url>
+    </radio>
+  </category>
+
+  <radio>
+    <name>Cambridge University station</name>
+    <url>http://cur.chu.cam.ac.uk:8000/cur.ogg</url>
+  </radio>
+  <radio>
+    <name>Student radio for Nottingham</name>
+    <url>http://urn-live.nottingham.ac.uk:8080/urn_high.mp3</url>
+  </radio>
+  <radio>
+    <name>France Inter</name>
+    <url>http://213.205.96.91:9915</url>
+  </radio>
+  <radio>
+    <name>France Info</name>
+    <url>http://213.205.96.91:9929</url>
+  </radio>
+  <radio>
+    <name>France Culture</name>
+    <url>http://213.205.96.91:9911</url>
+  </radio>
+  <radio>
+    <name>FIP</name>
+    <url>http://213.205.96.91:9903</url>
+  </radio>
+  <radio>
+    <name>France Musique</name>
+    <url>http://213.205.96.91:9919</url>
+  </radio>
+</radiolist>

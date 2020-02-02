@@ -1,0 +1,37 @@
+#!/bin/sh
+
+KDB=/bin/kdb
+
+header() {
+echo "Content-type: text/html"
+echo
+echo "<html>"
+echo "  <head>"
+echo "     <meta http-equiv='Pragma' content='no-cache'>"
+echo "     <title>Thomson - Product Information</title>"
+echo "  </head>"
+echo "<body>"
+ }
+
+footer() {
+echo "</body>"
+echo "</html>"
+}
+
+kdbecho() {
+    [ -f /etc/kdb/$2 ] && echo "$1="$($KDB get $2)"<br>"
+}
+
+header
+
+kdbecho BOARD_VERSION system/permanent/hardware
+kdbecho BOOTLOADER_VERSION system/permanent/version
+kdbecho BASE_VERSION system/config/version
+kdbecho EXTENDED_VERSION  system/usr/config/version
+kdbecho DECT_SOFTWARE_VERSION  system/runtime/dectm/version
+kdbecho DECT_EEPROM_VERSION  system/runtime/dectm/eep_version
+
+kdbecho MAC          system/permanent/mac
+kdbecho RFPI         system/runtime/dectm/rfpi
+
+footer

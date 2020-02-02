@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+# Start the upnp media renderer
+#
+. /etc/config
+
+case $1 in
+    start)
+        /bin/echo "Starting UPnP media renderer ..."
+	[ -f /usr/share/media/jingle-bells.mp3 ] && /usr/bin/ffplayer /usr/share/media/jingle-bells.mp3
+        spawn respawn "/usr/bin/ffplayer"
+        ;;
+    stop)
+        /bin/echo "Stopping UPnP media renderer ..."
+        spawn cancel "/usr/bin/ffplayer"
+        ;;
+    restart)
+	$0 stop
+	$0 start
+	;;
+    *)
+esac
+

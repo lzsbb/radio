@@ -1,0 +1,33 @@
+#!/bin/sh
+#
+# Start the upnp media server
+#
+. /etc/config
+
+case $1 in
+    start)
+        /bin/echo "Starting upnp_media_server for radio ..."
+	spawn respawn "/usr/bin/upnp_media_server_common -p /var/run/upnp_media_server_common"
+        ;;
+    stop)
+        /bin/echo "Stopping upnp_media_server for radio ..."
+	spawn cancel "/usr/bin/upnp_media_server_common -p /var/run/upnp_media_server_common"
+        ;;
+    restart)
+	$0 stop
+	$0 start
+	;;
+    update_network)
+	MEDIASERVER_PID=$(kdb get system/runtime/upnp_media_server/pid)
+	if [ "$MEDIASERVER_PID" != "0" ]; then
+		echo " ------------ upnp_media_server update_network ----------"
+		kill -USR1 $MEDIASERVER_PID
+	fi
+	;;
+    update_radio_list)
+	/bin/echo "Updating radio list ..."
+	/etc/radio/get_radio_list
+	;;
+    *)
+esac
+

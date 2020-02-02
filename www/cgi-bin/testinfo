@@ -1,0 +1,23 @@
+#!/bin/sh
+
+KDB=/bin/kdb
+
+header() {
+echo "Content-type: text/plain"
+echo
+}
+
+kdbget() {
+    echo "$1=\""$($KDB get $1)"\""
+}
+
+header
+kdbget system/config/version
+kdbget system/usr/config/version
+kdbget system/redboot/version
+kdbget system/redboot/hardware
+kdbget system/redboot/mfg_id
+kdbget system/redboot/eth_mac
+kdbget system/redboot/serial_number
+kdbget system/runtime/dectm/version
+kdbget system/runtime/dectm/rfpi

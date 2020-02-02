@@ -1,0 +1,344 @@
+#!/bin/sh
+
+. /etc/config
+
+
+	# This file has been preprocessed for a MDG module embedded in the gateway
+
+
+mdg_reset()
+{
+echo "reset 1" > /proc/dect
+echo "reset 0" > /proc/dect
+}
+
+get_version(  )
+{
+	hcidev=$1
+	# check firmware version
+	tmp=$(hcitool -i $hcidev cmd 0x3b 0x2A0)
+	set ${tmp##*plen}
+	shift 5
+	ver=$(( (0x$2+(0x$1 << 8)) & 0xFFF ))
+	echo $ver
+}
+
+get_rfpi(  )
+{
+	hcidev=$1
+	# check RFPI
+	tmp=$(hcitool -i $hcidev cmd 0x3b 0x0289)
+	set ${tmp##*plen}
+	shift 5
+	rfpi="$1$2$3$4$5"
+	echo $rfpi
+}
+
+set_rfpi(  )
+{
+	hcidev=$1
+	shift 
+	hcitool cmd 0x3B 0xB3 0x01 0x1f 0x5 $*
+}
+
+get_eep_version( )
+{
+	hcidev=$1
+	# check RFPI
+	tmp=$(hcitool -i $hcidev cmd 0x3b 0xb2 0x02 0x00 0x02)
+	set ${tmp##*plen}
+	shift 8
+	ver_eep=$(( (0x$2+(0x$1 << 8)) ))
+	echo $ver_eep
+}
+
+rm_mdg_keys(  )
+{
+	kdb rm system/runtime/mdg/hci_dev
+	kdb rm system/runtime/mdg/hci_dev_id
+	kdb rm system/runtime/mdg/hciattach_pid 
+}
+
+rm_dectm_keys(  )
+{
+	kdb rm system/runtime/dectm/rfpi
+	kdb rm system/runtime/dectm/version
+}
+
+
+
+start_mdg()
+{
+	if [ -f /var/run/mdg ]; then
+		echo "mdg already started"
+		exit 1
+	fi
+	touch /var/run/mdg	
+	#avoid multiple concurrent launch of scripts
+	DECTM_WATCHDOG=$(kdb get system/config/dectm/watchdog)
+	MDG_UPDATE_DISABLED=$(kdb get system/config/dectm/update_disabled)
+	MDG_SOFT_VER=$(kdb get system/config/dectm/soft_ver)
+	MDG_EEP_VER=$(kdb get system/config/dectm/eep_ver)
+	MDG_EEP_NAME=$(kdb get system/config/dectm/eep_name)
+	MDG_EEP_FILTER=$(kdb get system/config/dectm/eep_filter)
+
+		
+	[ -z "$MDG_EEP_FILTER" ] && MDG_EEP_FILTER=eep_filter.txt
+
+	insmod dect
+	insmod spi
+	insmod bluetooth
+	rmmod hci_uart ; insmod hci_uart hciextn=0
+	
+
+
+	# start hcid if not running yet
+	echo "Starting hciattach now!"
+	killall -0 hcid 2>/dev/null || hcid
+	
+	
+	hciattach_return=$(hciattach -p -t 2 /dev/ttySPI0 bcsp 9600 no)
+	if [ "$hciattach_return" = "" ]; then	
+		echo "no MDG module detected, try again"
+		mdg_reset
+		sleep 4
+		hciattach_return=$(hciattach -p -t 2 /dev/ttySPI0 bcsp 9600 no)
+	fi
+	
+	#set $hciattach_return
+	hciattach_pid=$hciattach_return
+	hcidev=hci0
+
+	kdb set system/runtime/mdg/hci_dev $hcidev
+	kdb set system/runtime/mdg/hci_dev_id $(echo $hcidev | sed -e 's/hci//')
+	kdb set system/runtime/mdg/hciattach_pid $hciattach_pid
+	kdb set system/runtime/dectm/rfpi $(get_rfpi $hcidev)
+	kdb set system/runtime/dectm/eep_version $(get_eep_version $hcidev)
+
+	
+	# configure the watchdog if needed
+	if [ "$DECTM_WATCHDOG" -eq 1 ]; then
+		mkdir -p /var/run/hcid
+		ln -s /usr/etc/init.d/mdg /var/run/hcid/watchdog_$hcidev
+	fi
+	hciconfig $hcidev up
+	
+
+
+
+        # Configure module number of connexions
+        # also adjusted in voip stack
+        echo Configuring 1 call channels in mdg
+        hcitool -i $hcidev cmd 0x3B 0x51 1 0x1 0x0
+
+
+	# Check if hciattach is still running
+	kill -0 $hciattach_pid > /dev/null 2>&1
+	if [ "$?" != "0" ]; then
+		echo "hciattach is not running anymore (mdg stop has been called during start)"
+		rm -f /var/run/mdg  /var/run/mdg_version
+		rm_mdg_keys
+		rm_dectm_keys
+	fi
+}
+
+
+stop_mdg()
+{
+
+	insmod dect
+	echo "off" > /proc/dect
+
+	if [ ! -f /var/run/mdg ]; then
+		echo "mdg already stopped"
+		exit 1
+	fi
+	
+	MDG_HCIATTACH_PID=$(kdb get system/runtime/mdg/hciattach_pid)
+	kill $MDG_HCIATTACH_PID
+	sleep 2
+	rm -f /var/run/mdg  /var/run/mdg_version 
+	rm_mdg_keys
+	rm_dectm_keys
+	#if no more bluetooth or dect device attached, remove hcid
+	# but do not remove if dect watchdog without reboot
+	if [ "$1" != "watchdog" ]; then
+	    killall -0 hciattach 2>/dev/null || killall hcid
+	fi
+
+  [ "$1" = "hci" ] || \
+  (rmmod cp2101 && rmmod usbserial)
+  rmmod hci_uart
+  rmmod bluetooth
+  rmmod spi
+}
+
+watchdog()
+{
+	if [ -f /etc/init.d/ntp ]; then
+	    if [ -f /var/run/ntp_delta ]; then     
+		current_date=$(date -n +"%Y/%m/%d %X")
+	    else
+		current_date=$(date +"%j ------ %X")
+	    fi
+	else
+	    current_date=$(date +"%j %X")
+	fi
+        echo "$current_date  DECT watchdog." >> /root/adsld.log
+	sleep 2
+	reboot
+}
+
+factory_reset()
+{
+	if [ ! -f /var/run/mdg ]; then
+		echo "mdg already stopped"
+		exit 1
+	fi
+
+	MDG_HCIDEV=$(kdb get system/runtime/mdg/hci_dev)
+	echo "mdg factory reset"
+	# clearsub
+	hcitool -i $MDG_HCIDEV cmd 0x3B 0x286
+	# set pincode to 0000
+	hcitool -i $MDG_HCIDEV cmd 0x3B 0xB3  01 92  04  FF FF 00 00
+	#echo "MDG_FACTORY_RESET_DONE=y" >> /usr/etc/mdg.conf
+	stop_mdg
+	mdg_reset
+	sleep 4
+	start_mdg
+}
+
+	
+
+hcidevid ()
+{
+	if [ -f /var/run/mdg ]; then
+		MDG_HCIDEV_ID=255
+		MDG_HCIDEV_ID=$(kdb get system/runtime/mdg/hci_dev_id)
+		exit $MDG_HCIDEV_ID
+	else
+		exit 255
+	fi
+}
+
+# Preassociate the IPUI $2 as the handset #$3 using the slot #$3
+set_subscription ()
+{
+	#warning: set pincode to 0000
+	local regex="^\([0-9A-F]\{2\}\)\([0-9A-F]\{2\}\)\([0-9A-F]\{2\}\)\([0-9A-F]\{2\}\)\([0-9A-F]\{2\}\)$"
+	local hcidev="$1"
+	local ipui_1=$( echo "$2" | sed  -n "s/$regex/\1/p" )
+	local ipui_2=$( echo "$2" | sed  -n "s/$regex/\2/p" )
+	local ipui_3=$( echo "$2" | sed  -n "s/$regex/\3/p" )
+	local ipui_4=$( echo "$2" | sed  -n "s/$regex/\4/p" )
+	local ipui_5=$( echo "$2" | sed  -n "s/$regex/\5/p" )
+	if [ -z $ipui_1 ]; then
+		return 1
+	fi
+	local slot
+	if [ -z "$3" ]; then
+		slot="1"
+	elif [ "$3" -ge 1 -a "$3" -le 5 ]; then
+		slot="$3"
+	else
+		return 1
+	fi
+	local offset=$(printf "0x%02X" $((($slot-1) * 0x28 % 0x100)))
+	
+	if [ ! -f /var/run/mdg ]; then
+		echo "mdg is not running"
+		exit 1
+	fi
+
+	hcitool -i $hcidev cmd 0x3B 0xB3 0x00 ${offset} 0x28 0x"$ipui_1" 0x"$ipui_2" 0x"$ipui_3" 0x"$ipui_4" 0x"$ipui_5" \
+	0x00 0x00 0x0${slot} \
+	0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF \
+	0x01 0x01 0x01 0x01 0x01 0x01 0x01 0x01 0x01 0x01 0x01 0x01 0x01 0x01 0x01 0x01 \
+	0xFF 0xFF 0x00 0x00 \
+	0x01 0x01 0xA${slot} 0x01
+
+}
+
+dump_eep () 
+{
+	hcidev=$1
+
+	i=0
+	while [ $i -lt 1024 ]; do
+
+		tmp=$(hcitool -i $hcidev cmd 0x3b 0xb2 $(printf "0x%02x 0x%02x" $(expr $i / 256) $(expr $i % 256)) 0x04)
+		i=$(( $i + 4 ))
+		set ${tmp##*plen}
+		shift 8
+		for x in $*; do printf "\x$x"; done
+	done
+}
+
+
+case $1 in
+	start)
+		[ -e "/var/run/prod_test" ] && exit;
+		start_mdg
+		;;
+	start2)
+		# pour la prod
+		start_mdg
+		;;
+	stop)
+		stop_mdg $2
+		;;
+	restart)
+		$0 stop
+		exec $0 start
+		;;
+	factory_reset)
+		factory_reset
+		;;
+	clear_sub)
+		#clear subscription list of the mdg. mdg need to be running first (mdg start)
+		MDG_HCIDEV=$(kdb get system/runtime/mdg/hci_dev)
+		hcitool -i $MDG_HCIDEV cmd 0x3B 0x286
+		;;
+	pairing)
+		#start infinite pairing
+		MDG_HCIDEV=$(kdb get system/runtime/mdg/hci_dev)
+		hcitool -i $MDG_HCIDEV cmd 0x3B 0x283 1
+		;;	
+	hcidevid)
+		hcidevid
+		;;
+	version)
+		MDG_HCIDEV=$(kdb get system/runtime/mdg/hci_dev)
+		echo $(get_version $MDG_HCIDEV )
+		;;
+	eep_version)
+		MDG_HCIDEV=$(kdb get system/runtime/mdg/hci_dev)
+		echo $(get_eep_version $MDG_HCIDEV )
+		;;
+	watchdog)
+		watchdog
+		;;
+	rfpi)
+		MDG_HCIDEV=$(kdb get system/runtime/mdg/hci_dev)
+		echo $(get_rfpi $MDG_HCIDEV )
+		;;
+	set_subscription)
+		# pour la prod
+		MDG_HCIDEV=$(kdb get system/runtime/mdg/hci_dev)
+		set_subscription $MDG_HCIDEV $2 $3
+		;;
+	dump_eep)
+		MDG_HCIDEV=$(kdb get system/runtime/mdg/hci_dev)
+		dump_eep $MDG_HCIDEV
+		;;
+	set_rfpi)
+		shift
+		MDG_HCIDEV=$(kdb get system/runtime/mdg/hci_dev)
+		set_rfpi $MDG_HCIDEV $*
+		;;
+	*)
+		echo "Usage: mdg [start|stop|restart|clear_sub|hcidevid|version|eep_version|pairing|set_subscription|rfpi]"
+		;;
+esac
+

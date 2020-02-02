@@ -1,0 +1,19 @@
+#!/bin/sh
+echo "Content-type: text/html"
+echo
+echo "<html><head><meta HTTP-EQUIV='Pragma' CONTENT='no-cache'></head><body>"
+
+echo "Audio test sub<br>"
+echo "<br><br>"
+
+echo "Press button and subscribe handset (Appuyer sur le bouton et associez le combine)"
+
+echo "<br><br>"
+echo "<a href="cgi_audio_test_sub">Refresh</a>"
+echo "<br><br>"
+echo "<a href="cgi_audio_test_pots">Test POTS</a>"
+echo "<br><br>"
+echo "---<br>"
+
+/usr/blue/mdgtool subinfo
+
