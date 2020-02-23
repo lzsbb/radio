@@ -1,0 +1,49 @@
+# /etc/modules: kernel modules to load at boot time.
+#
+# This file should contain the names of kernel modules that are
+# to be loaded at boot time, one per line.  Comments begin with
+# a "#", and everything on the line after them are ignored.
+
+# Ethernet
+
+# Wifi
+chekov-bcm43xx
+
+
+# USB
+# TODO: built-in?
+usbcore
+chekov-hcd
+
+# Mass storage
+# TODO: built-in?
+scsi_mod
+sd_mod
+usb-storage
+
+# Other OS FS support
+
+# GPIO access
+gpio
+
+# button
+button
+
+# glowing leds
+leds
+
+# PoMMES keyboard, dial and touchscreen
+
+# TCM access
+tcm
+
+#Davinci ethernet
+# Davinci EVM ir
+
+
+
+# Marvell/Davinci
+
+# Davinci Codec Engine
+
+

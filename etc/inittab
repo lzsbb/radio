@@ -1,0 +1,5 @@
+# /etc/inittab: init(8) configuration.
+::sysinit:/etc/init.d/rcS
+
+# shell
+::askfirst:-/bin/login

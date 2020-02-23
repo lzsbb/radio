@@ -1,0 +1,9 @@
+#!/bin/sh
+#
+# Common variables for all scripts
+#
+
+CONFIG_VERBOSE=y
+
+[ "x$CONFIG_VERBOSE" == "xy" ] && set -x
+
