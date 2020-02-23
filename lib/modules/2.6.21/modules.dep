@@ -1,0 +1,25 @@
+/lib/modules/2.6.21/extra/wlan-bco/chekov-bcm43xx.ko:
+/lib/modules/2.6.21/extra/unionfs-2.1.11/unionfs.ko:
+/lib/modules/2.6.21/extra/tty_spi/spi.ko:
+/lib/modules/2.6.21/extra/tcm/tcm.ko:
+/lib/modules/2.6.21/extra/leds/leds.ko:
+/lib/modules/2.6.21/extra/gpio/gpio.ko:
+/lib/modules/2.6.21/extra/dect/dect.ko:
+/lib/modules/2.6.21/extra/button/button.ko:
+/lib/modules/2.6.21/kernel/fs/vfat/vfat.ko: /lib/modules/2.6.21/kernel/fs/fat/fat.ko /lib/modules/2.6.21/kernel/fs/nls/nls_base.ko
+/lib/modules/2.6.21/kernel/fs/nls/nls_utf8.ko: /lib/modules/2.6.21/kernel/fs/nls/nls_base.ko
+/lib/modules/2.6.21/kernel/fs/nls/nls_iso8859-1.ko: /lib/modules/2.6.21/kernel/fs/nls/nls_base.ko
+/lib/modules/2.6.21/kernel/fs/nls/nls_cp437.ko: /lib/modules/2.6.21/kernel/fs/nls/nls_base.ko
+/lib/modules/2.6.21/kernel/fs/nls/nls_base.ko:
+/lib/modules/2.6.21/kernel/fs/msdos/msdos.ko: /lib/modules/2.6.21/kernel/fs/fat/fat.ko /lib/modules/2.6.21/kernel/fs/nls/nls_base.ko
+/lib/modules/2.6.21/kernel/fs/hfsplus/hfsplus.ko: /lib/modules/2.6.21/kernel/fs/nls/nls_base.ko
+/lib/modules/2.6.21/kernel/fs/hfs/hfs.ko: /lib/modules/2.6.21/kernel/fs/nls/nls_base.ko
+/lib/modules/2.6.21/kernel/fs/fuse/fuse.ko:
+/lib/modules/2.6.21/kernel/fs/fat/fat.ko: /lib/modules/2.6.21/kernel/fs/nls/nls_base.ko
+/lib/modules/2.6.21/kernel/drivers/usb/storage/usb-storage.ko: /lib/modules/2.6.21/kernel/drivers/usb/core/usbcore.ko /lib/modules/2.6.21/kernel/drivers/scsi/scsi_mod.ko
+/lib/modules/2.6.21/kernel/drivers/usb/host/chekov-hcd.ko: /lib/modules/2.6.21/kernel/drivers/usb/core/usbcore.ko
+/lib/modules/2.6.21/kernel/drivers/usb/core/usbcore.ko:
+/lib/modules/2.6.21/kernel/drivers/scsi/sd_mod.ko: /lib/modules/2.6.21/kernel/drivers/scsi/scsi_mod.ko
+/lib/modules/2.6.21/kernel/drivers/scsi/scsi_mod.ko:
+/lib/modules/2.6.21/kernel/drivers/char/hw_random/rng-core.ko:
+/lib/modules/2.6.21/kernel/drivers/base/firmware_class.ko:
