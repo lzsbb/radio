@@ -1,0 +1,123 @@
+#!/bin/sh
+#Hotplug script for Masse Storage Devices
+
+#Pairing
+
+
+#Easy pairing handler with Network manager
+
+easy_pairing()
+{
+    #todo : handle case whith more than one device
+    for rep in /var/usbdrive/*
+      do
+      [ -f $rep/WSETTING.WFC ] && {
+        cp $rep/WSETTING.WFC /var/run/WSETTING.WFC
+        kill -USR1 $( cat /var/run/nm.pid )
+        break
+      }
+      [ -f $rep/SMRTNTKY/WSETTING.WFC ] && {
+        cp $rep/SMRTNTKY/WSETTING.WFC /var/run/WSETTING.WFC
+        kill -USR1 $( cat /var/run/nm.pid )
+        break
+      }
+      done
+}
+
+
+
+#AUTOPLAY
+
+
+
+
+#Upnp media server handler
+
+
+upnp_media_server_start()
+{
+/etc/init.d/upnp_usb_media_server start
+}
+
+upnp_media_server_stop()
+{
+/etc/init.d/upnp_usb_media_server stop
+}
+
+
+#bftpd server handler
+
+
+
+
+
+
+
+
+
+
+
+#samba server handler
+
+
+
+
+
+
+link_usb_disk()
+{
+    mkdir /var/usbdrive
+    i=0
+    for rep in /var/usbmount/*
+    do
+        if [ -d $rep ]; then
+            i=$(($i+1))
+            ln -s $rep /var/usbdrive/$i
+        fi
+    done;
+
+}
+unlink_usb_disk()
+{
+    rm -Rf /var/usbdrive
+    sleep 5
+}
+
+if [ "$ACTION" = "add" ]; then
+    echo "USB mass storage added, start media server"
+    /etc/init.d/mass_storage update
+
+    link_usb_disk
+    
+    
+
+    easy_pairing
+
+    
+
+    upnp_media_server_start
+
+    
+
+    
+    
+    
+
+
+else # Removing usb drive
+
+    echo "USB mass storage removed, stop media server"
+
+    
+
+    
+
+    upnp_media_server_stop
+
+    
+
+    unlink_usb_disk
+
+    /etc/init.d/mass_storage update
+fi
+
