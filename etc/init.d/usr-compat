@@ -1,0 +1,13 @@
+#!/bin/sh
+#
+# Check compatibility of usr package with /
+#
+
+. /etc/config
+
+VERSION=$(kdb get system/config/version)
+PKGVERSION=$(kdb get system/config/pkg/usr/version)
+
+# Reject if not equal
+[ "$VERSION" != "$PKGVERSION" ] && exit 1
+exit 0

@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# Setup the networking interfaces
+
+. /etc/config
+
+case $1 in
+    start)
+        /bin/echo "Starting network_manager ..."
+        spawn respawn "/bin/nm"
+        ;;
+    stop)
+        /bin/echo "Stopping network_manager ..."
+        spawn cancel "/bin/nm"
+        ;;
+    restart)
+	$0 stop
+	$0 start
+	;;
+    *)
+esac

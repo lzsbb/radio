@@ -1,0 +1,57 @@
+#!/bin/sh
+#
+# configure packages depending on permanent information by
+# replacing all instance of @FACTORY_OPTION@ in .in files by their value.
+#
+# All files ending with '.in' in the current dir and subdirs are processed
+# and output to the corresponding file without the '.in' extension.
+
+. /etc/config
+
+# Configure packages
+FACTORY_MAC=$(kdb get system/permanent/mac)
+FACTORY_SERIAL=$(kdb get system/permanent/serial)
+FACTORY_UPNP_MEDIA_RENDERER_UDN=$(echo "${FACTORY_MAC}-0" | md5sum | cut -d ' ' -f 1)
+FACTORY_UPNP_MEDIA_SERVER_UDN=$(echo "${FACTORY_MAC}-1" | md5sum | cut -d ' ' -f 1)
+FACTORY_UPNP_USB_MEDIA_SERVER_UDN=$(echo "${FACTORY_MAC}-2" | md5sum | cut -d ' ' -f 1)
+FACTORY_SHORT_MAC=$(echo "${FACTORY_MAC}" | sed 's/\(..\):\(..\):\(..\):\(..\):\(..\):\(..\)/\5\6/')
+FRIENDLY_NAME=$(kdb get system/config/ffplayer/name)
+UPNP_NAME=$(kdb get system/config/upnp_device_name)
+
+kdb set system/config/upnp_mediaserver_usb/UDN $FACTORY_UPNP_USB_MEDIA_SERVER_UDN
+kdb set system/config/upnp_mediaserver_radio/UDN $FACTORY_UPNP_MEDIA_SERVER_UDN
+kdb set system/config/ffplayer/uuid $FACTORY_UPNP_MEDIA_RENDERER_UDN
+
+[ "x$FRIENDLY_NAME" == "x" ]  && kdb set system/config/ffplayer/name "${UPNP_NAME}-${FACTORY_SHORT_MAC}"
+
+# look for .in files
+for SCRIPT in $(find /etc -name '*.in' | sed 's/^\.\///'); do
+
+    OUTPUT=$(echo $SCRIPT | sed 's/\.in$//')
+
+    # get the list of config options to replace in $SCRIPT
+    LIST=$(grep '@FACTORY.*@' $SCRIPT | sed 's/.*@\(.*\)@.*/\1/')
+
+    SUBST=""
+    for NAME in $LIST; do
+        # get the config option value
+	VAL=$(eval echo "\$$NAME")
+
+ 	# say what we're doing if verbose
+	[ "x$V" == "x1" ] && echo -e "\t[${SCRIPT}]\t$NAME=$VAL"
+
+        # escape the / and \ characters
+	VAL=$(echo $VAL | sed 's/\\/\\\\/g' | sed 's/\//\\\//g')
+	
+        # add to the substitution string
+	SUBST="${SUBST}s/@$NAME@/$VAL/g;"
+    done
+
+    # substitute
+    sed "$SUBST" $SCRIPT > $OUTPUT
+done
+
+# remove ourself so that we run the script only once after factory settings
+rm -f $0
+
+exit 0

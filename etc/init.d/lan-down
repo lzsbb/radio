@@ -1,0 +1,10 @@
+#!/bin/sh
+#
+# Call when they are no interface up (after atimeout )
+#
+. /etc/config
+
+	
+		#stop player 
+		echo -e "stop\n\n"|nc 127.0.0.1 33684
+

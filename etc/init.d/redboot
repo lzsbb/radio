@@ -1,0 +1,60 @@
+#!/bin/sh
+#
+# Read the RedBoot configuration and store it in the key database (permanent)
+#
+
+. /etc/config
+
+# Check if bootloader is Redboot (no bootloader= or bootloader="Red...")
+BOOTLOADER=$(grep 'bootloader=' /proc/cmdline | sed 's/.*bootloader=\"\(.*\)\".*/\1/')
+
+[ -n "$BOOTLOADER" -a -z "$(echo $BOOTLOADER | grep Red)" ] && exit 0
+
+FCONFIG=/bin/fconfig
+
+echo "Reading RedBoot config..."
+
+# Parse the cmdline for Redboot information
+cmdline_var()
+{
+    grep $1 /proc/cmdline > /dev/null && sed "s/.*$1=\"\([^\"]*\).*\"/\1/" /proc/cmdline
+}
+
+HWVERSION=$(cmdline_var hwversion)
+REDBOOTVERSION=$(cmdline_var redbootversion)
+
+# alternate names
+[ -z "$HWVERSION" ] && HWVERSION=$(cmdline_var board)
+[ -z "$REDBOOTVERSION" ] && REDBOOTVERSION=$(cmdline_var bootloader)
+
+kdb set system/permanent/hardware "$HWVERSION"
+kdb set system/permanent/version "$REDBOOTVERSION"
+# XXX: left over for compatibility
+kdb set system/redboot/hardware "$HWVERSION"
+kdb set system/redboot/version "$REDBOOTVERSION"
+
+# Read the ethernet address if present
+ETH_MAC=$($FCONFIG | grep '^\(eth_esa\)\|\(eth0_esa_data\)' | sed 's/.*: 0x\(..\):0x\(..\):0x\(..\):0x\(..\):0x\(..\):0x\(..\)/\1:\2:\3:\4:\5:\6/')
+if [ ! -z $ETH_MAC ]; then
+    kdb set system/permanent/mac $ETH_MAC
+    # XXX: left over for compatibility
+    kdb set system/redboot/eth_mac $ETH_MAC
+fi
+
+# Read variables starting with system/
+for PAIR in $($FCONFIG | grep '^system/' | sed 's/: /=/'); do
+    KEY=$(echo $PAIR | cut -d = -f 1)
+    VALUE=$(echo $PAIR | cut -d = -f 2)
+    echo -e "\t$KEY = $VALUE"
+    kdb set $KEY $VALUE
+    # compatibility
+    KEY=$(echo $KEY | sed 's/serial_number/serial/')
+    KEY=$(echo $KEY | sed 's/redboot/permanent/')
+    echo -e "\t$KEY = $VALUE"
+    kdb set $KEY $VALUE
+done
+
+# remove ourself so that we run the script only once after factory settings
+rm -f $0
+
+exit 0

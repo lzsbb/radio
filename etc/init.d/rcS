@@ -1,0 +1,192 @@
+#!/bin/sh
+#
+# Start-up script
+#
+. /etc/config
+
+format_jffs2() {
+    dev="$1"
+
+    echo "Formatting JFFS2 ($dev)"
+    tr '\000' '\377' < /dev/zero > $dev
+    sync
+}
+
+mount_check_jffs2() {
+    dev="$1"
+    fs="$2"
+
+    mount -t jffs2 $dev $fs
+
+    # test if jffs2 is working as expected (rw)
+    /bin/rm -f $fs/touch.test
+    /bin/touch $fs/touch.test
+    if [ ! -e $fs/touch.test ]
+    then
+        # JFFS2 was not correctly mounted.
+        # START RECOVERY
+        umount $fs
+        format_jffs2 $dev
+        mount -t jffs2 $dev $fs
+        # test if jffs2 is working as expected (rw)
+        /bin/rm -f $fs/touch.test
+        /bin/touch $fs/touch.test
+        if [ ! -e $fs/touch.test ]
+        then
+            # JFFS2 was not correctly mounted.
+            # START RECOVERY
+            umount $fs
+            format_jffs2 $dev
+            /sbin/reboot
+        else
+            /bin/rm -f $fs/touch.test
+            if [ -e $fs/touch.test ]
+            then
+            # JFFS2 was not correctly mounted : unable to erase a file in it.
+                umount $fs
+                format_jffs2 $dev
+                /sbin/reboot
+            fi
+        fi  
+    else
+        /bin/rm -f $fs/touch.test
+        if [ -e $fs/touch.test ]
+        then
+          # JFFS2 was not correctly mounted : unable to erase a file in it.
+          umount $fs
+          format_jffs2 $dev
+          /sbin/reboot
+        fi
+    fi
+}
+
+
+
+PATH=/usr/bin:/usr/sbin:/bin:/sbin:
+export PATH
+
+LD_LIBRARY_PATH=/usr/local/lib:/usr/lib:/lib
+export LD_LIBRARY_PATH
+
+# Mount pseudo filesystems
+/bin/mount -t proc proc /proc
+
+mount -t sysfs sys /sys
+mount -t usbfs usb /proc/bus/usb/
+
+mount -t tmpfs -o size=256k var /var
+mount -t tmpfs              tmp /tmp
+
+# Create /var entries
+mkdir -p /var/dev /var/log /var/run /var/state/dhcp /var/ppp /var/udhcpd /var/lib /var/tmp
+
+# Setup unionfs
+insmod unionfs
+
+# Needed for syslogd to create the /dev/log socket
+mount -t unionfs -o dirs=/var/dev=rw:/dev=ro dev /dev
+# Needed for telnetd to open pseudo terminals
+mount -t devpts devpts /dev/pts
+
+
+# Create the mtd named partitions
+mkdir -p /dev/mtd /dev/mtdblock
+sed 's/dev.*//;s/^mtd\([0-9]\).*"\(.*\)"/\1 \2/'  /proc/mtd | \
+  while read i name; do
+    [ $i ] || continue
+    ln -sf /dev/mtd$i "/dev/mtd/$name" 
+    ln -sf /dev/mtdblock$i "/dev/mtdblock/$name" 
+    ln -sf "/dev/mtd/$name" /dev/mtd/$i
+    ln -sf "/dev/mtdblock/$name" /dev/mtdblock/$i 
+  done
+
+# Determine /
+rescue=0
+ROOTFS=$(sed -n "s,.*root=/dev/mtd/\([^ ]*\).*,\1,p" /proc/cmdline)
+ROOTFS_MTD="/dev/mtd/$ROOTFS"
+ROOTFS_MTDBLOCK="/dev/mtdblock/$ROOTFS"
+ln -sf $ROOTFS_MTDBLOCK /dev/root 
+ln -sf $ROOTFS_MTD /dev/mtd/root 
+ln -sf $ROOTFS_MTDBLOCK /dev/mtdblock/root 
+
+# Determine /usr
+if [ ! -e /dev/mtdblock/usr ]; then
+    USRFS_MTD=$(echo $ROOTFS_MTD | sed "y/01/10/")
+    USRFS_MTDBLOCK=$(echo $USRFS_MTD | sed 's/mtd/mtdblock/')
+    ln -sf $USRFS_MTD /dev/mtd/usr
+    ln -sf $USRFS_MTDBLOCK /dev/mtdblock/usr
+fi
+
+# Start to mount out /etc unionfs, we will add branches as needed
+mount -t unionfs -o ro,dirs=/etc=ro etc /etc
+
+
+# Mount the non-volatile data partition
+
+if [ -e /dev/mtdblock/nvdata ]; then
+    echo "Mounting non-volatile data partition"
+    mount_check_jffs2 /dev/mtdblock/nvdata /nv
+fi
+[ -f /nv/etc/factory_settings ] && rm -rf /nv/etc
+mkdir -p /nv/etc
+
+# Add non-volatile partition on top of the /etc union
+mount -t unionfs -o remount,rw,add=/nv/etc /etc
+
+# Mount the runtime key universe
+mount -t tmpfs runtime /etc/kdb/system/runtime
+
+# Print the version
+version=$(kdb get system/config/version)
+echo -ne "\n###############  Running Software version $version  ###############\n\n"
+
+# Check for update failure
+usr_failed=$(kdb get system/config/update/usr_umount_failure)
+etc_failed=$(kdb get system/config/update/etc_umount_failure)
+
+if [ "$usr_failed" = "y" -o "$etc_failed" = "y" ]; then
+	echo "don't remount /usr as failed to unmount on previous update"
+	
+	# remove the flag, and just enter rescue mode. update should work fine now
+	kdb set system/config/update/usr_umount_failure n
+	kdb set system/config/update/etc_umount_failure n
+	rescue=1
+else
+
+
+    # Try to mount /usr
+    echo "Try to mount /usr"
+	
+	if [ "squashfs" = "jffs2" ]; then
+		mount -t jffs2 /dev/mtdblock/usr /usr
+		result=$?
+	else
+		(sign_verify /dev/mtdblock/usr 0x29032005 && \
+			mount -t squashfs /dev/mtdblock/usr /usr)
+		result=$?
+	fi
+	
+	if [ ! $result -eq 0 ] ; then 
+	rescue=1
+	echo "Mount failed !"
+	fi
+	
+	if [ "$rescue" != "1" ] ; then
+		# add /usr/etc to /etc unionfs
+		mount -t unionfs -o remount,add=:/usr/etc=ro /etc
+	fi
+
+
+fi # [ "$usr_failed" = "y" -o "$etc_failed" = "y" ]
+
+
+
+
+# save the rescue status
+kdb set system/runtime/rescue_boot $rescue
+
+# Force init to reload /etc/inittab and reopen /dev/spawn
+kill -HUP 1
+
+exec /etc/init.d/rc 1
+

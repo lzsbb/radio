@@ -1,0 +1,62 @@
+#!/bin/sh
+#
+# Start the upnp media renderer
+#
+. /etc/config
+
+ETH_MAC=$(kdb get system/permanent/mac)
+VERSION=$(kdb get system/config/version)
+NOUPDATE=$(kdb get system/config/noupdate)
+IPADDR=$(kdb get system/runtime/ipaddress)
+
+MUSICBOX_REGISTRATION_LOGIN=$(kdb get system/config/registration/login)
+MUSICBOX_REGISTRATION_PASSWORD=$(kdb get system/config/registration/password)
+MUSICBOX_REGISTRATION_SERVER=$(kdb get system/config/registration/server)
+MUSICBOX_REGISTRATION_CGI=$(kdb get system/config/registration/cgi)
+
+case $1 in
+    up)
+	conf_set_str /var/run/ip_updown IP_UPDOWN up
+
+	# register to the Box
+	wget "http://$MUSICBOX_REGISTRATION_LOGIN:$MUSICBOX_REGISTRATION_PASSWORD@$MUSICBOX_REGISTRATION_SERVER/$MUSICBOX_REGISTRATION_CGI?MAC=$ETH_MAC&VERSION=$VERSION&IPADDR=$IPADDR" -O /dev/null
+	# update
+	if [ "$NOUPDATE" != "1" ]; then
+		while [ -f /var/run/runlevel_in_progress ]; do
+				echo "Wait for runlevel to complete before starting update"
+				sleep 5
+		done
+		exec /sbin/update_fs
+	fi
+
+	# Thomson radio server : get radio list
+	
+# 	if [ "$NOUPDATE_RADIO" != "1" ]; then
+# 	    /etc/radio/get_radio_list
+# 	fi
+	[ -f /etc/radio/get_radio_list ] && /etc/radio/get_radio_list
+# update podcast of upnp media server radio
+	kdb set system/config/podcast/load/update 1
+
+
+
+
+	# start httpd
+	# VCH: started independently
+#       [ -f /etc/init.d/httpd ] && /usr/etc/init.d/httpd start
+        ;;
+    down)
+
+	conf_set_str /var/run/ip_updown IP_UPDOWN down
+
+	# stop httpd
+	# VCH: started independently
+#       [ -f /etc/init.d/httpd ] && /usr/etc/init.d/httpd stop
+
+        ;;
+    restart)
+	/usr/etc/init.d/upnp_media_renderer restart
+	;;
+    *)
+esac
+

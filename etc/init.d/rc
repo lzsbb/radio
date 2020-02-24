@@ -1,0 +1,92 @@
+#!/bin/sh
+
+. /etc/config
+
+runlevel_manage()
+{
+    local previous
+    runlevel=$1
+    if [ -f /var/run/runlevel ] ; then
+	previous=$(cat /var/run/runlevel)
+    else 
+	previous=N
+    fi
+    if [ "$runlevel" = "$previous" ] ; then 
+	return
+    fi
+
+    local scriptlist directorylist
+#    directorylist="/etc/rc$runlevel.d/:/usr/etc/rc$runlevel.d/"
+    directorylist="/etc/rc$runlevel.d/"
+    OLDIFS=$IFS
+    IFS=":$IFS"
+
+# Build the complete list of K scripts, in alphabetical order
+    scriptlist=""
+    for dir in $directorylist ; do 
+        scriptlist="$(find $dir -name "K*" | sed s,$dir,, ) $scriptlist" 
+    done;
+    scriptlist=$( ( for file in $scriptlist ; do echo $file ; done ; ) | sort -u )
+
+# Kill services for this runlevel
+    for script in $scriptlist  ; do 
+	for dir in $directorylist ; do 
+	    if [ -f $dir$script ] ; then 
+		    sh $dir$script stop
+		break;
+	    fi
+	done ;
+    done
+
+# We publish new runlevel here, because daemons may consult this.
+    echo $runlevel > /var/run/runlevel_in_progress
+
+# We also publish the state
+    echo $$ > /var/run/rc.pid
+
+# Build the complete list of S scripts, in alphabetical order
+    scriptlist=""
+    for dir in $directorylist ; do 
+        scriptlist="$(find $dir -name "S*" | sed s,$dir,, ) $scriptlist" 
+    done;
+    scriptlist=$( ( for file in $scriptlist ; do echo $file ; done ; ) | sort -u )
+    numscript=1
+    for i in $scriptlist; do
+    	numscript=$(( $numscript + 1 ))
+    done
+    index=2
+# Start services for this runlevel
+    for script in $scriptlist ; do
+	for dir in $directorylist ; do 
+	    if [ -f $dir$script ] ; then 
+		realscript=$dir$script
+		if [ "$runlevel" != "N" ] ; then
+		    number=${script#S}
+		    number=$( echo $number | cut -c 1-2 )
+		    suffix=${script#S[0-9][0-9]}
+		    stop=${dir}K[0-9][0-9]$suffix
+		    previous_start=$(echo $dir | sed s,rc$runlevel,rc$previous, )S[0-9][0-9]$suffix
+		    # Si on n'a pas de script de kill dans ce 
+		    # runlevel, et qu'il y a un script de start dans le précédent 
+		    # runlevel, il n'est pas nécéssaire de relancer le service.
+		    [ -f $previous_start ] && [ ! -f $stop ] && continue
+		fi
+		sh $realscript start
+		break;
+	    fi
+	done ;
+
+    done ;
+
+    rm -f /var/run/rc.pid
+
+# We publish new runlevel here, because daemons might consult this.
+    rm -f /var/run/runlevel_in_progress
+    echo $runlevel > /var/run/runlevel
+
+}
+
+
+echo Switching to RUNLEVEL $1 ... > /dev/console
+runlevel_manage $1
+

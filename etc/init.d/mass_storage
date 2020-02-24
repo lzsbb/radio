@@ -1,0 +1,137 @@
+#!/bin/sh
+
+MOUNT_DIR="/var/usbmount"
+UID=99
+GID=99
+
+insmod_fs()
+{
+	insmod nls_base
+	insmod nls_cp437
+	insmod nls_iso8859-1
+	insmod nls_utf8
+	insmod fat
+	insmod vfat
+	insmod hfsplus
+	insmod hfs
+	insmod fuse
+	grep ntfs-3g /etc/filesystems || echo "ntfs-3g" >> /etc/filesystems
+}
+
+rmmod_fs()
+{
+	rm /etc/filesystems
+	rmmod fuse
+	rmmod hfs
+	rmmod hfsplus
+	rmmod vfat
+	rmmod fat
+	rmmod nls_utf8
+	rmmod nls_iso8859-1
+	rmmod nls_cp437
+	rmmod nls_base
+}
+
+mount_partition()
+{
+	if [ "$1" != "" ]; then
+		device="$1";
+	else
+		device="sda1";
+	fi;
+	echo "Mounting device: $device"
+	mkdir "$MOUNT_DIR/$device";
+	sleep 2
+        mount "/dev/$device" "$MOUNT_DIR/$device" -o sync,noatime,uid=$UID,gid=$GID,shortname=mixed
+        [ $? != 0 ] && rmdir "$MOUNT_DIR/$device"
+}
+
+umount_partition()
+{
+	if [ "$1" != "" ]; then
+		device="$1";
+	else
+		device="sda1";
+	fi;
+	echo "Umounting device: $device"
+	grep $device /proc/mounts && umount "$MOUNT_DIR/$device" 
+	rmdir "$MOUNT_DIR/$device" 
+}
+
+mount_all()
+{       
+	sleep 1
+	for disk in sda1 sda2 sda3 sda4 sda5 sda6 sda7 sda8 sda9
+	do
+		mount_partition $disk
+	done;
+}
+
+umount_all()
+{
+	for disk in sda1 sda2 sda3 sda4 sda5 sda6 sdb1 sdb2 sdb3 sdb4 sdb5 sdb6
+	do
+		umount_partition $disk
+	done;
+}
+
+mount_update()
+{
+	for ext in a b; do
+		# mount partitions that are still not mounted
+		for disk in $(find /sys/block/sd$ext/ -name "sd$ext*" 2>/dev/null | sort); do
+			disk=${disk##*/}	
+			if [ "$disk" = "" ]; then
+				disk="sd$ext";
+			fi
+			echo "$disk already mounted ?"
+			if grep "$MOUNT_DIR/$disk " /proc/mounts; then
+				echo "	yes"
+			else
+				echo "	no"
+				mount_partition $disk 
+			fi
+		done
+	done
+	# umount those mounted but not connected any more
+	for dir in $MOUNT_DIR/* ; do
+		disk=${dir##*/}
+		echo "$disk still connected to USB ?"
+		if [ -z "$(find /sys/block -name $disk)" ]; then
+			echo "	no"
+			umount_partition $disk
+		else
+			echo "	yes"
+		fi
+	done
+}
+
+case $1 in
+		start)
+			[ ! -d $MOUNT_DIR ] && mkdir $MOUNT_DIR && insmod_fs
+			mount_update
+		;;
+		stop)
+			umount_all
+			rmmod_fs
+		;;
+		mount)
+			mount_partition $2
+		;;
+		umount)
+			umount_partition $2
+		;;
+		update)
+			[ ! -d $MOUNT_DIR ] && mkdir $MOUNT_DIR && insmod_fs
+			mount_update
+		;;
+		restart)
+			echo "Restart usb storage\n"
+			umount_all
+			mount_all 
+		;;
+		*)
+			echo "do nothing"
+		;;
+esac
+
