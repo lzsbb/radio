@@ -1,0 +1,18 @@
+#!/bin/sh
+#
+# Start the telnet daemon
+#
+. /etc/config
+
+case $1 in
+    start)
+        /bin/echo "Starting telnetd ..."
+        spawn respawn "/sbin/telnetd -F -p 23 -l /bin/sh"
+        ;;
+    stop)
+        /bin/echo "Stopping telnetd ..."
+        spawn cancel "/sbin/telnetd -F -p 23 -l /bin/sh"
+        ;;
+    *)
+esac
+

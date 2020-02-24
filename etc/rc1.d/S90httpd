@@ -1,0 +1,31 @@
+#!/bin/sh
+#
+# Start the http daemon
+#
+. /etc/config
+
+case $1 in
+    start)
+        /bin/echo "Starting Web server ..."
+	if mount | grep '/usr type unionfs' 2> /dev/null; then
+	    UNION="/www=ro"
+	    for i in 7 6 5 4 3 2 1 0; do
+		[ -d /pkg/$i/www ] && UNION="/pkg/$i/www=ro:$UNION"
+	    done
+	    mount -t unionfs -o ro,dirs=$UNION www /www
+	else
+	    mount -t unionfs -o ro,dirs=/usr/www=rw:/www=ro www /www
+	fi
+        spawn respawn "/bin/appweb -r /etc/appweb -f appWeb.conf"
+        ;;
+    stop)
+        /bin/echo "Stopping Web server ..."
+        spawn cancel "/bin/appweb -r /etc/appweb -f appWeb.conf"
+	umount /www
+        ;;
+    restart)
+	$0 stop
+	$0 start
+	;;
+    *)
+esac

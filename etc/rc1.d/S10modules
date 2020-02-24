@@ -1,0 +1,40 @@
+#!/bin/sh
+#
+# Load modules in /etc/modules
+#
+. /etc/config
+
+MODULES_FILE=/etc/modules
+
+case $1 in
+    start)
+        /bin/echo "Loading modules..."
+
+	# parse /etc/modules
+	grep -v '^#' $MODULES_FILE | \
+	    while read module args; do
+	        [ "$module" ] || continue
+	        echo -e "\t$module"
+	        insmod $module $args
+	    done
+        ;;
+
+    stop)
+        /bin/echo "Unloading modules..."
+
+	# unload modules in reverse order
+	MODULES=""
+	grep -v '^#' $MODULES_FILE | \
+	    (while read module args; do
+	        [ "$module" ] || continue
+		MODULES="$module $MODULES"
+	     done; 
+	     for module in $MODULES; do
+		echo -e "\t$module"
+		rmmod $module
+	     done
+	    )
+        ;;
+    *)
+esac
+

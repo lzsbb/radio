@@ -1,0 +1,37 @@
+#!/bin/sh
+# Setup kernel variables
+
+
+HOSTNAME=$(kdb get system/config/hostname)
+DEBUG_LEVEL=$(kdb get system/config/kernel/printk)
+IPFORWARD=$(kdb get system/config/ipforward)
+IPDEFAULT=$(kdb get system/config/ipdefaultTTL)
+
+# hostname do not accept more than 64 characters
+len_max=64
+
+if [ ${#HOSTNAME} -gt ${len_max} ]; then
+    HOSTNAME=`expr substr $HOSTNAME 1 $len_max`
+fi
+
+hostname $HOSTNAME
+
+# routing
+echo $IPFORWARD > /proc/sys/net/ipv4/ip_forward
+echo $IPDEFAULT > /proc/sys/net/ipv4/ip_default_ttl
+
+# panic on oops
+echo 1 > /proc/sys/kernel/panic_on_oops
+
+# reboot after 1 sec on panic
+echo 1 > /proc/sys/kernel/panic
+
+# set printk level to KERN_DEBUG (ignored)
+echo $DEBUG_LEVEL > /proc/sys/kernel/printk
+
+# ARP who-as, reply only if the target IP address is local address
+#	      configured on the incoming interface
+echo 1  > /proc/sys/net/ipv4/conf/all/arp_ignore
+
+# ARP is-at, always use the best local address for this target.
+echo 2  > /proc/sys/net/ipv4/conf/all/arp_announce

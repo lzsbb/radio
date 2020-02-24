@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# Start the upnp control point
+#
+. /etc/config
+
+case $1 in
+    start)
+        /bin/echo "Starting LEDd ..."
+        spawn respawn "/bin/ledd"
+        ;;
+    stop)
+        /bin/echo "Stopping LEDd ..."
+        spawn cancel "/bin/ledd"
+        ;;
+    restart)
+	$0 stop
+	$0 start
+	;;
+    *)
+esac
